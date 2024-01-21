@@ -136,9 +136,8 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* current solar flux */
 	offset = 0;
 	if (data->solar_flux >= 100 && data->solar_flux <= 199) {
-		data->solar_flux -= 100;
 		for (int i = 0; i < 100; i++) {
-			if (i == data->solar_flux) {
+			if (i == data->solar_flux - 100) {
 				number_len = geophys_nums_100_199_sizes[i];
 				memcpy(out_buffer + samples,
 					geophys_nums_100_199 + offset,
@@ -149,9 +148,8 @@ void build_geophys_announcement(struct geophys_data_t *data,
 			offset += geophys_nums_100_199_sizes[i];
 		}
 	} else if (data->solar_flux >= 200 && data->solar_flux <= 299) {
-		data->solar_flux -= 200;
 		for (int i = 0; i < 100; i++) {
-			if (i == data->solar_flux) {
+			if (i == data->solar_flux - 200) {
 				number_len = geophys_nums_200_299_sizes[i];
 				memcpy(out_buffer + samples,
 					geophys_nums_200_299 + offset,
@@ -162,9 +160,8 @@ void build_geophys_announcement(struct geophys_data_t *data,
 			offset += geophys_nums_200_299_sizes[i];
 		}
 	} else if (data->solar_flux >= 300 && data->solar_flux <= 399) {
-		data->solar_flux -= 300;
 		for (int i = 0; i < 100; i++) {
-			if (i == data->solar_flux) {
+			if (i == data->solar_flux - 300) {
 				number_len = geophys_nums_300_399_sizes[i];
 				memcpy(out_buffer + samples,
 					geophys_nums_300_399 + offset,
