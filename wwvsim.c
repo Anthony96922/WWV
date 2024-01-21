@@ -52,6 +52,8 @@
 #include "audio/hamsci.h"
 /* 3G shutdown announcement (unofficial) */
 #include "audio/3g-shutdown.h"
+/* 2G shutdown announcement (unofficial) */
+#include "audio/2g-shutdown.h"
 
 /* workaround for missing pi definition */
 #ifndef M_PI
@@ -398,6 +400,22 @@ static int announce_3g_shutdown(int16_t *audio, int startms, int stopms, int wwv
 	short *this_3g_ann = wwvh ? _3g_shutdown_ann + _3g_shutdown_ann_sizes[0] : _3g_shutdown_ann;
 
 	memcpy(audio + startms*Samprate_ms, this_3g_ann, samples*sizeof(*audio));
+	return 0;
+}
+#endif
+
+#if 1
+/* T-Mobile GSM shutdown announcement: WWV/H */
+static int announce_2g_shutdown(int16_t *audio, int startms, int stopms, int wwvh) {
+	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
+		return -1;
+
+	int max_len = (stopms - startms)*Samprate_ms;
+	int samples = _2g_shutdown_ann_sizes[wwvh];
+	if (samples > max_len) samples = max_len;
+	short *this_2g_ann = wwvh ? _2g_shutdown_ann + _2g_shutdown_ann_sizes[0] : _2g_shutdown_ann;
+
+	memcpy(audio + startms*Samprate_ms, this_2g_ann, samples*sizeof(*audio));
 	return 0;
 }
 #endif
@@ -772,6 +790,13 @@ done:
 		announce_3g_shutdown(output, 2000, 45000, 0);
 	} else if (wwvh && (minute == 16 || minute == 46)) {
 		announce_3g_shutdown(output, 2000, 45000, 1);
+#endif
+#if 1  /* will be removed soon */
+	/* T-Mobile GSM shutdown announcement (unofficial) */
+	} else if (!wwvh && (minute == 14 || minute == 44)) {
+		announce_2g_shutdown(output, 2000, 45000, 0);
+	} else if (wwvh && (minute == 16 || minute == 46)) {
+		announce_2g_shutdown(output, 2000, 45000, 1);
 #endif
 
 	} else {

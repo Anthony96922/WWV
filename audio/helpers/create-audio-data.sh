@@ -6,6 +6,7 @@
 ./mars	> ../mars_ann.c		2> ../mars_ann.h
 ./hamsci	> ../hamsci.c		2> ../hamsci.h
 ./3g-shutdown	> ../3g-shutdown.c	2> ../3g-shutdown.h
+./2g-shutdown	> ../2g-shutdown.c	2> ../2g-shutdown.h
 ./geophys_ann	> ../geophys_ann.c	2> ../geophys_ann.h
 ./geophys_months	>	../geophys_months.c	2> ../geophys_months.h
 for i in 0 1 2 3; do
