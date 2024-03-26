@@ -96,7 +96,7 @@ void build_time_announcement(int hour, int minute, int h, int len, short *voice)
 	samples += time_ann_sizes[2];
 
 	// add pause (WWV only)
-	if (!h) samples += 100*100;
+	if (!h) samples += 100*50;
 
 	// coordinated universal time
 	memcpy(out_buffer+samples, time_ann+time_ann_offset, time_ann_sizes[3]*sizeof(*voice));
