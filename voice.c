@@ -45,10 +45,10 @@ void build_time_announcement(int hour, int minute, int h, int len, short *voice)
 		time_ann_sizes = wwv_time_ann_sizes;
 	}
 
-	out_buffer = malloc(16000 * 60 * 2 * sizeof(*voice)); // doubled just in case
+	out_buffer = malloc(SAMPLE_RATE * 60 * 2 * sizeof(*voice)); // doubled just in case
 
 	/* clear out buffer */
-	memset(out_buffer, 0, 16000 * 60 * 2 * sizeof(*voice));
+	memset(out_buffer, 0, SAMPLE_RATE * 60 * 2 * sizeof(*voice));
 
 	// at the tone
 	memcpy(out_buffer, time_ann, time_ann_sizes[0]*sizeof(*voice));
@@ -75,7 +75,7 @@ void build_time_announcement(int hour, int minute, int h, int len, short *voice)
 	samples += time_ann_sizes[1];
 
 	/* add pause (WWV only) */
-	if (!h) samples += 100*25;
+	if (!h) samples += SAMPLES_IN_1_MS * 150;
 
 	// # of minutes
 	number_offset = 0;
@@ -96,7 +96,7 @@ void build_time_announcement(int hour, int minute, int h, int len, short *voice)
 	samples += time_ann_sizes[2];
 
 	// add pause (WWV only)
-	if (!h) samples += 100*50;
+	if (!h) samples += SAMPLES_IN_1_MS * 325;
 
 	// coordinated universal time
 	memcpy(out_buffer+samples, time_ann+time_ann_offset, time_ann_sizes[3]*sizeof(*voice));

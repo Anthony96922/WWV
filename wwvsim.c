@@ -60,8 +60,6 @@
 #define M_PI	3.14159265358979323846
 #endif
 
-#define SAMPLE_RATE	16000
-
 extern int fileno(FILE *fd);
 
 //char Libdir[] = "/usr/local/share/ka9q-radio";

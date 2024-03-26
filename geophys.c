@@ -78,15 +78,15 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	short *out_buffer;
 
 	/* doubled just in case */
-	out_buffer = malloc(16000 * 60 * 2 * sizeof(*voice));
+	out_buffer = malloc(SAMPLE_RATE * 60 * 2 * sizeof(*voice));
 
 	/* clear out buffer */
-	memset(out_buffer, 0, 16000 * 60 * 2 * sizeof(*voice));
+	memset(out_buffer, 0, SAMPLE_RATE * 60 * 2 * sizeof(*voice));
 
 	/* "solar-terrestrial indices for" */
-	memcpy(out_buffer, geophys_ann, (geophys_ann_sizes[0] - 5000) * sizeof(*voice));
+	memcpy(out_buffer, geophys_ann, (geophys_ann_sizes[0] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[0];
-	samples += geophys_ann_sizes[0] - 5000;
+	samples += geophys_ann_sizes[0] - SAMPLES_IN_1_MS * 325;
 
 	/* yesterday's day of month */
 	offset = 0;
@@ -129,9 +129,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "solar flux" */
 	memcpy(out_buffer + samples,
 		geophys_ann + ann_offset,
-		(geophys_ann_sizes[2] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[2] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[2];
-	samples += geophys_ann_sizes[2] - 5100;
+	samples += geophys_ann_sizes[2] - SAMPLES_IN_1_MS * 325;
 
 	/* current solar flux */
 	offset = 0;
@@ -189,9 +189,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "and estimated planetary A-index" */
 	memcpy(out_buffer + samples,
 		geophys_ann + ann_offset,
-		(geophys_ann_sizes[3] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[3] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[3];
-	samples += geophys_ann_sizes[3] - 5100;
+	samples += geophys_ann_sizes[3] - SAMPLES_IN_1_MS * 325;
 
 	/* current A-index */
 	offset = 0;
@@ -213,9 +213,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "the estimated planetary K-index at" */
 	memcpy(out_buffer + samples,
 		geophys_ann + ann_offset,
-		(geophys_ann_sizes[4] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[4] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[4];
-	samples += geophys_ann_sizes[4] - 5100;
+	samples += geophys_ann_sizes[4] - SAMPLES_IN_1_MS * 325;
 
 	/* current hour */
 	offset = 0;
@@ -234,9 +234,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "UTC on" */
 	memcpy(out_buffer + samples,
 		geophys_ann + ann_offset,
-		(geophys_ann_sizes[5] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[5] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[5];
-	samples += geophys_ann_sizes[5] - 5100;
+	samples += geophys_ann_sizes[5] - SAMPLES_IN_1_MS * 325;
 
 	/* today's day */
 	offset = 0;
@@ -269,9 +269,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "was" */
 	memcpy(out_buffer + samples,
 		geophys_ann + ann_offset,
-		(geophys_ann_sizes[6] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[6] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[6];
-	samples += geophys_ann_sizes[6] - 5100;
+	samples += geophys_ann_sizes[6] - SAMPLES_IN_1_MS * 325;
 
 	/* estimated K-index */
 	offset = 0;
@@ -290,9 +290,9 @@ void build_geophys_announcement(struct geophys_data_t *data,
 	/* "point" */
 	memcpy(out_buffer + samples,
 		 geophys_ann + ann_offset,
-		(geophys_ann_sizes[7] - 5100) * sizeof(*voice));
+		(geophys_ann_sizes[7] - SAMPLES_IN_1_MS * 325) * sizeof(*voice));
 	ann_offset += geophys_ann_sizes[7];
-	samples += geophys_ann_sizes[7] - 5100;
+	samples += geophys_ann_sizes[7] - SAMPLES_IN_1_MS * 325;
 
 	offset = 0;
 	for (int i = 0; i < 100; i++) {
