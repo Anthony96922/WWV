@@ -50,7 +50,7 @@ void get_geophys_data(struct geophys_data_t *data) {
 
 	/* parse the file for the data */
 	sscanf(buf,
-		"%hhu,%hhu,%hu,%hhu,%hhu,%hhu,%hhu,%hhu.%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
+		"%hhu,%hhu,%hu,%hu,%hhu,%hhu,%hhu,%hhu.%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
 		&data->prev_day, &data->month_of_prev_day,
 		&data->solar_flux,
 		&data->a_index,
@@ -192,15 +192,54 @@ void build_geophys_announcement(struct geophys_data_t *data,
 
 	/* current A-index */
 	offset = 0;
-	for (int i = 0; i < 100; i++) {
-		if (i == data->a_index) {
-			number_len = geophys_nums_0_99_sizes[i];
-			memcpy(out_buffer + samples, geophys_nums_0_99 + offset,
-				number_len * sizeof(*voice));
-			break;
+	if (data->a_index >= 100 && data->a_index <= 199) {
+		for (int i = 0; i < 100; i++) {
+			if (i == data->a_index - 100) {
+				number_len = geophys_nums_100_199_sizes[i];
+				memcpy(out_buffer + samples,
+					geophys_nums_100_199 + offset,
+					number_len * sizeof(*voice));
+				break;
+			}
+			/* continue stepping through the data */
+			offset += geophys_nums_100_199_sizes[i];
 		}
-		/* continue stepping through the data */
-		offset += geophys_nums_0_99_sizes[i];
+	} else if (data->a_index >= 200 && data->a_index <= 299) {
+		for (int i = 0; i < 100; i++) {
+			if (i == data->a_index - 200) {
+				number_len = geophys_nums_200_299_sizes[i];
+				memcpy(out_buffer + samples,
+					geophys_nums_200_299 + offset,
+					number_len * sizeof(*voice));
+				break;
+			}
+			/* continue stepping through the data */
+			offset += geophys_nums_200_299_sizes[i];
+		}
+	} else if (data->a_index >= 300 && data->a_index <= 399) {
+		for (int i = 0; i < 100; i++) {
+			if (i == data->a_index - 300) {
+				number_len = geophys_nums_300_399_sizes[i];
+				memcpy(out_buffer + samples,
+					geophys_nums_300_399 + offset,
+				number_len * sizeof(*voice));
+				break;
+			}
+			/* continue stepping through the data */
+			offset += geophys_nums_300_399_sizes[i];
+		}
+	} else { /* < 100 */
+		for (int i = 0; i < 100; i++) {
+			if (i == data->a_index) {
+				number_len = geophys_nums_0_99_sizes[i];
+				memcpy(out_buffer + samples,
+					geophys_nums_0_99 + offset,
+				number_len * sizeof(*voice));
+				break;
+			}
+			/* continue stepping through the data */
+			offset += geophys_nums_0_99_sizes[i];
+		}
 	}
 	samples += number_len;
 

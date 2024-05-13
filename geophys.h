@@ -26,7 +26,7 @@ typedef struct geophys_data_t {
 
 	uint16_t solar_flux;
 
-	uint8_t a_index;
+	uint16_t a_index;
 
 	uint8_t hour;
 
