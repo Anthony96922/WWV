@@ -205,7 +205,6 @@ static complex double csincos(double x) {
 	return cos(x) + I*sin(x);
 }
 
-#if 0
 // Insert PCM audio file into audio output at specified offset
 static int announce_audio_file(int16_t *output, char *file, int startms) {
 	if (startms < 0 || startms >= 61000)
@@ -221,6 +220,7 @@ static int announce_audio_file(int16_t *output, char *file, int startms) {
 	return r;
 }
 
+#if 0
 // Synthesize speech from a text file and insert into audio output at specified offset
 // Use female = 1 for WWVH, 0 for WWV
 static int announce_text_file(int16_t *output,char *file, int startms, int female) {
@@ -767,11 +767,14 @@ done:
 
 	/* geophysical alerts on minute 18 */
 	} else if (!wwvh && minute == 18) {
-		announce_geophys(output, 2500, 45000, geophys_data);
+		if (announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500) == -1) {
+			announce_geophys(output, 2500, 45000, geophys_data);
+		}
 	/* ... and on minute 45 */
 	} else if (wwvh && minute == 45) {
-		announce_geophys(output, 2500, 45000, geophys_data);
-
+		if (announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500) == -1) {
+			announce_geophys(output, 2500, 45000, geophys_data);
+		}
 	/* HamSci */
 	} else if (!wwvh && minute == 4) {
 		announce_hamsci(output, 1000, 45000, 0, 0);
