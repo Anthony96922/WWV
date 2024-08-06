@@ -50,10 +50,6 @@
 #include "audio/wwvh_phone.h"
 /* HamSci */
 #include "audio/hamsci.h"
-/* 3G shutdown announcement (unofficial) */
-#include "audio/3g-shutdown.h"
-/* 2G shutdown announcement (unofficial) */
-#include "audio/2g-shutdown.h"
 
 /* workaround for missing pi definition */
 #ifndef M_PI
@@ -385,38 +381,6 @@ static int announce_hamsci(int16_t *audio, int startms, int stopms, int wwvh, in
 		test ? hamsci_test : hamsci_ann + ann_offset, samples*sizeof(*audio));
 	return 0;
 }
-
-#if 0
-/* Sprint LTE and T-Mobile UMTS shutdown announcement: WWV/H */
-static int announce_3g_shutdown(int16_t *audio, int startms, int stopms, int wwvh) {
-	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
-		return -1;
-
-	int max_len = (stopms - startms)*Samprate_ms;
-	int samples = _3g_shutdown_ann_sizes[wwvh];
-	if (samples > max_len) samples = max_len;
-	short *this_3g_ann = wwvh ? _3g_shutdown_ann + _3g_shutdown_ann_sizes[0] : _3g_shutdown_ann;
-
-	memcpy(audio + startms*Samprate_ms, this_3g_ann, samples*sizeof(*audio));
-	return 0;
-}
-#endif
-
-#if 0
-/* T-Mobile GSM shutdown announcement: WWV/H */
-static int announce_2g_shutdown(int16_t *audio, int startms, int stopms, int wwvh) {
-	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
-		return -1;
-
-	int max_len = (stopms - startms)*Samprate_ms;
-	int samples = _2g_shutdown_ann_sizes[wwvh];
-	if (samples > max_len) samples = max_len;
-	short *this_2g_ann = wwvh ? _2g_shutdown_ann + _2g_shutdown_ann_sizes[0] : _2g_shutdown_ann;
-
-	memcpy(audio + startms*Samprate_ms, this_2g_ann, samples*sizeof(*audio));
-	return 0;
-}
-#endif
 
 // Overlay a tone with frequency 'freq' in audio buffer, overwriting whatever was there
 // starting at 'startms' within the minute and stopping one sample before 'stopms'.
