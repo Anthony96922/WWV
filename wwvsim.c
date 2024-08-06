@@ -402,7 +402,7 @@ static int announce_3g_shutdown(int16_t *audio, int startms, int stopms, int wwv
 }
 #endif
 
-#if 1
+#if 0
 /* T-Mobile GSM shutdown announcement: WWV/H */
 static int announce_2g_shutdown(int16_t *audio, int startms, int stopms, int wwvh) {
 	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
@@ -795,9 +795,9 @@ done:
 #if 1  /* will be removed soon */
 	/* T-Mobile GSM shutdown announcement (unofficial) */
 	} else if (!wwvh && (minute == 14 || minute == 44)) {
-		announce_2g_shutdown(output, 2000, 45000, 0);
+		announce_audio_file(output, "/tmp/custom_announcement.wwv.audio", 2500);
 	} else if (wwvh && (minute == 16 || minute == 46)) {
-		announce_2g_shutdown(output, 2000, 45000, 1);
+		announce_audio_file(output, "/tmp/custom_announcement.wwvh.audio", 2500);
 #endif
 
 	} else {
