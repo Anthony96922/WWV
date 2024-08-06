@@ -44,7 +44,6 @@
 #include <fcntl.h>
 
 #include "voice.h"
-#include "geophys.h"
 #include "audio/id.h"
 #include "audio/wwvh_phone.h"
 /* HamSci */
@@ -334,19 +333,6 @@ static int announce_phone(int16_t *audio, int startms, int stopms) {
 	if (samples > max_len) samples = max_len;
 
 	memcpy(audio + startms*Samprate_ms, wwvh_phone, samples*sizeof(*audio));
-	return 0;
-}
-
-/* Geophysical report: WWV/H */
-static int announce_geophys(int16_t *audio, int startms, int stopms,
-	struct geophys_data_t *data) {
-	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
-		return -1;
-
-	build_geophys_announcement(data,
-		(stopms - startms)*Samprate_ms, audio + startms*Samprate_ms
-	);
-
 	return 0;
 }
 
@@ -649,8 +635,7 @@ static void decode_timecode(unsigned char *code,int length) {
 }
 
 // Insert tone or announcement into seconds 1-44
-static void gen_tone_or_announcement(int16_t *output,int wwvh,int hour,int minute,
-	struct geophys_data_t *geophys_data) {
+static void gen_tone_or_announcement(int16_t *output,int wwvh,int hour,int minute) {
 	const double tone_amp = pow(10.,-6.0/20.); // -6 dB
 
 #if 0
@@ -712,14 +697,11 @@ done:
 
 	/* geophysical alerts on minute 18 */
 	} else if (!wwvh && minute == 18) {
-		if (announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500) == -1) {
-			announce_geophys(output, 2500, 45000, geophys_data);
-		}
+		announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500);
 	/* ... and on minute 45 */
 	} else if (wwvh && minute == 45) {
-		if (announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500) == -1) {
-			announce_geophys(output, 2500, 45000, geophys_data);
-		}
+		announce_audio_file(output, "/tmp/wwv-geophys.audio", 2500);
+
 	/* HamSci */
 	} else if (!wwvh && minute == 4) {
 		announce_hamsci(output, 1000, 45000, 0, 0);
@@ -744,8 +726,7 @@ done:
 
 
 
-static void makeminute(int16_t *output,int length,int wwvh,unsigned char *code,int dut1,int hour,int minute,
-	struct geophys_data_t *geophys_data) {
+static void makeminute(int16_t *output,int length,int wwvh,unsigned char *code,int dut1,int hour,int minute) {
 	// Amplitudes
 	// NIST 250-67, p 50
 	const double marker_high_amp = pow(10.,-6.0/20.);
@@ -757,14 +738,9 @@ static void makeminute(int16_t *output,int length,int wwvh,unsigned char *code,i
 	const double tickfreq = wwvh ? 1200.0 : 1000.0;
 	const double hourbeep = 1500.0; // Both WWV and WWVH
 
-	/* this is updated hourly */
-	if (minute == 15)
-		get_geophys_data(geophys_data);
-
 	// Build a minute of audio
 	memset(output,0,(length+1)*Samprate*sizeof(*output)); // Clear previous audio
-	gen_tone_or_announcement(output,wwvh,hour,minute,
-		geophys_data);
+	gen_tone_or_announcement(output,wwvh,hour,minute);
 
 	// Insert minute announcement
 	int nextminute,nexthour; // What are the next hour and minute?
@@ -928,8 +904,6 @@ int main(int argc,char *argv[]) {
 	fsec = 0.0;
 #endif
 
-	struct geophys_data_t geophys_data;
-
 #if 0
 	for (int y=2007;y < 2100;y++) {
 		fprintf(stderr,"year %d dst start %d\n",y,dst_start_doy(y));
@@ -1076,9 +1050,6 @@ int main(int argc,char *argv[]) {
 	month = utc->tm_mon + 1;
 	year = utc->tm_year + 1900;
 
-	/* get geophysical report on startup */
-	get_geophys_data(&geophys_data);
-
 	while (1) {
 		// First buffer half for even minutes, latter half for odd minutes
 		// Even minutes are always 60 seconds long
@@ -1115,7 +1086,7 @@ int main(int argc,char *argv[]) {
 		if (WWVB) {
 			makewwvbminute(audio,length,code);
 		} else {
-			makeminute(audio,length,WWVH,code,dut1,hour,minute,&geophys_data);
+			makeminute(audio,length,WWVH,code,dut1,hour,minute);
 		}
 
 #ifdef DIRECT
