@@ -748,21 +748,11 @@ done:
 		announce_hamsci(output, 1000, 45000, 0, 1);
 	} else if (wwvh && minute == 48) {
 		announce_hamsci(output, 1000, 45000, 1, 1);
-
-#if 0 /* will be removed soon */
-	/* Sprint LTE and T-Mobile UMTS shutdown announcement (unofficial) */
-	} else if (!wwvh && (minute == 14 || minute == 44)) {
-		announce_3g_shutdown(output, 2000, 45000, 0);
-	} else if (wwvh && (minute == 16 || minute == 46)) {
-		announce_3g_shutdown(output, 2000, 45000, 1);
-#endif
-#if 1  /* will be removed soon */
-	/* T-Mobile GSM shutdown announcement (unofficial) */
+	/* custom announcement (unofficial) */
 	} else if (!wwvh && (minute == 14 || minute == 44)) {
 		announce_audio_file(output, "/tmp/custom_announcement.wwv.audio", 2500);
 	} else if (wwvh && (minute == 16 || minute == 46)) {
 		announce_audio_file(output, "/tmp/custom_announcement.wwvh.audio", 2500);
-#endif
 
 	} else {
 		if (tone)
