@@ -46,7 +46,6 @@
 #include "voice.h"
 #include "geophys.h"
 #include "audio/id.h"
-#include "audio/mars_ann.h"
 #include "audio/wwvh_phone.h"
 /* HamSci */
 #include "audio/hamsci.h"
@@ -324,22 +323,6 @@ static int announce_station(int16_t *audio, int startms, int stopms, int wwvh) {
 	memcpy(audio + startms*Samprate_ms, this_id, samples*sizeof(*audio));
 	return 0;
 }
-
-#if 0
-// DoD M.A.R.S. (no actual messages yet)
-static int announce_mars(int16_t *audio, int startms, int stopms, int wwvh) {
-	if (startms < 0 || startms >= 61000 || stopms <= startms || stopms > 61000)
-		return -1;
-
-	int max_len = (stopms - startms)*Samprate_ms;
-	int samples = mars_ann_sizes[wwvh];
-	if (samples > max_len) samples = max_len;
-	short *this_mars_ann = wwvh ? mars_ann + mars_ann_sizes[0] : mars_ann;
-
-	memcpy(audio + startms*Samprate_ms, this_mars_ann, samples*sizeof(*audio));
-	return 0;
-}
-#endif
 
 // WWVH only: announce WWVH broadcast availability over the phone
 static int announce_phone(int16_t *audio, int startms, int stopms) {
@@ -716,14 +699,12 @@ done:
 	} else if (!wwvh && (minute == 0 || minute == 30)) {
 		announce_station(output,1000,45000,0);
 
-#if 0 /* no broadcasts? */
 	/* DoD M.A.R.S. announcement on minute 10 */
 	} else if (!wwvh && (minute == 10)) {
-		announce_mars(output, 2000, 45000, 0);
+		announce_audio_file(output, "/tmp/mars.wwv.audio", 2500);
 	/* ...and on minute 50 */
 	} else if (wwvh && (minute == 50)) {
-		announce_mars(output, 2000, 45000, 1);
-#endif
+		announce_audio_file(output, "/tmp/mars.wwh.audio", 2500);
 
 	/* dial-in information broadcast on WWVH only */
 	} else if (wwvh && (minute == 47 || minute == 52)) {
